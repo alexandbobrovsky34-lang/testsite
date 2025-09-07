@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МОУ СШ №54, Волгоград</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1a202c;
+        }
+        /* Анимация для плавного появления страницы */
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .page-section.active {
+            display: block;
+            animation: slideInUp 0.8s ease-out forwards;
+        }
+        /* Анимация: появление с лёгким скольжением вверх */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .nav-link.active {
+            color: #2563EB; /* Tailwind's blue-600 */
+            font-weight: 600;
+        }
+        /* Стили для аккордеона (FAQ) */
+        .accordion-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .accordion-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .accordion-header:hover {
+            color: #2563EB;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            padding: 0 1rem;
+        }
+        .accordion-content.open {
+            max-height: 1000px; /* Большое значение, чтобы хватило на любой контент */
+            padding: 1rem;
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        .accordion-header.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Стили для галереи */
+        .gallery-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .gallery-card:hover {
+            transform: translateY(-5px);
+        }
+        .gallery-card img {
+            transition: transform 0.5s ease;
+        }
+        .gallery-card:hover img {
+            transform: scale(1.1);
+        }
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .gallery-card:hover .gallery-caption {
+            opacity: 1;
+        }
+        /* Стили для навигации внутри раздела "Сведения об ОО" */
+        .nav-link-sved.active {
+            color: #2563EB;
+            font-weight: 600;
+        }
+        .subpage-section {
+            display: none;
+        }
+        .subpage-section.active {
+            display: block;
+        }
+
+        /* Стили для модального окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #4a5568;
+        }
+        
+        /* Стили для скрытых новостей */
+        .more-news-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .more-news-section.active {
+            display: grid;
+            animation: slideInUp 0.8s ease-out forwards;
+        }
+        .news-buttons.hidden {
+            display: none;
+        }
+        .news-buttons.visible {
+            display: flex;
+        }
+
+        /* Новые стили для высококонтрастной версии */
+        body.dark-mode {
+            background-color: #1a202c;
+            color: #ffff00; /* Ярко-желтый цвет текста */
+        }
+        body.dark-mode .bg-white {
+            background-color: #2d3748;
+        }
+        body.dark-mode .text-gray-800 {
+            color: #ffff00;
+        }
+        body.dark-mode .text-gray-600 {
+            color: #ffff00;
+        }
+        body.dark-mode .text-gray-700 {
+            color: #ffff00;
+        }
+        body.dark-mode .nav-link.active {
+            color: #90cdf4;
+        }
+        body.dark-mode .nav-link-sved.active {
+            color: #90cdf4;
+        }
+        body.dark-mode .accordion-item {
+            border-color: #4a5568;
+        }
+        body.dark-mode .bg-gray-50 {
+            background-color: #2d3748;
+        }
+        body.dark-mode .bg-gray-100 {
+            background-color: #1a202c;
+        }
+        body.dark-mode .bg-gray-200 {
+            background-color: #4a5568;
+            color: #f7fafc;
+        }
+        body.dark-mode .bg-gray-300 {
+            background-color: #4a5568;
+        }
+        body.dark-mode .bg-gray-400 {
+            background-color: #4a5568;
+        }
+        body.dark-mode .bg-gray-50 {
+            background-color: #2d3748;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Navigation Menu -->
+        <header class="bg-white shadow-md">
+            <nav class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-gray-800">
+                    <span class="text-blue-600">Школа</span> №54
+                </a>
+                <ul class="flex flex-wrap space-x-2 md:space-x-4 mt-4 md:mt-0">
+                    <li><a href="#home" data-page="home" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">Главная</a></li>
+                    <li><a href="#svedeniya" data-page="svedeniya" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">Сведения об ОО</a></li>
+                    <li><a href="#news" data-page="news" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">Новости</a></li>
+                    <li><a href="#gallery" data-page="gallery" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">Фотогалерея</a></li>
+                    <li><a href="#faq" data-page="faq" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">FAQ</a></li>
+                    <li><a href="#feedback" data-page="feedback" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">Обратная связь</a></li>
+                    <li><a href="#" id="visual-impairment-link" class="nav-link text-gray-600 hover:text-blue-600 transition duration-300">Версия для слабовидящих</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Модальное окно для версии для слабовидящих -->
+        <div id="accessibility-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 class="text-2xl font-bold mb-4">Настройки доступности</h3>
+                <div class="space-y-4">
+                    <!-- Регулировка размера текста -->
+                    <div>
+                        <p class="font-medium mb-2">Размер текста:</p>
+                        <div class="flex space-x-2">
+                            <button id="font-decrease-btn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full transition-colors">- A</button>
+                            <button id="font-increase-btn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full transition-colors">+ A</button>
+                        </div>
+                    </div>
+                    <!-- Регулировка жирности -->
+                    <div>
+                        <p class="font-medium mb-2">Жирность текста:</p>
+                        <button id="font-weight-btn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full transition-colors">Жирный / Обычный</button>
+                    </div>
+                    <!-- Регулировка стиля шрифта -->
+                    <div>
+                        <p class="font-medium mb-2">Стиль шрифта:</p>
+                        <button id="font-style-btn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full transition-colors">Сменить шрифт</button>
+                    </div>
+                     <!-- Регулировка цветовой схемы -->
+                     <div>
+                        <p class="font-medium mb-2">Цветовая схема:</p>
+                        <button id="color-scheme-btn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full transition-colors">Сменить цвет</button>
+                    </div>
+                    <!-- Сброс настроек -->
+                    <div>
+                        <button id="reset-settings-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-colors">Сбросить настройки</button>
+                    </div>
+                </div>
+                <!-- Кнопка закрытия -->
+                <button id="close-modal-btn" class="modal-close-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Модальное окно для админ-панели -->
+        <div id="admin-modal" class="modal-overlay">
+            <div class="modal-content max-w-2xl">
+                <div id="auth-form-container">
+                    <h3 class="text-2xl font-bold mb-4">Вход для администратора</h3>
+                    <p class="text-gray-600 mb-4">Для демонстрации функционала вход не требуется.</p>
+                    <button id="login-demo-btn" class="w-full bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300">
+                        Войти (Демо)
+                    </button>
+                </div>
+                
+                <div id="admin-panel-container" class="hidden">
+                    <h3 class="text-2xl font-bold mb-4">Админ-панель</h3>
+                    
+                    <h4 class="text-xl font-semibold mb-2 mt-6">Создание и редактирование новости</h4>
+                    <form id="news-form" class="space-y-4">
+                        <input type="hidden" id="edit-doc-id" name="docId">
+                        <p id="form-message" class="text-green-500 mb-4 hidden"></p>
+                        <div>
+                            <label for="news-title" class="block text-gray-700 font-medium mb-2">Заголовок новости</label>
+                            <input type="text" id="news-title" name="title" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Заголовок">
+                        </div>
+                        <div>
+                            <label for="news-content" class="block text-gray-700 font-medium mb-2">Текст новости</label>
+                            <textarea id="news-content" name="content" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Текст новости"></textarea>
+                        </div>
+                         <div>
+                            <label for="news-image" class="block text-gray-700 font-medium mb-2">URL изображения (необязательно)</label>
+                            <input type="text" id="news-image" name="image" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300">
+                                Добавить новость
+                            </button>
+                            <button type="button" id="cancel-edit-btn" class="w-full bg-gray-400 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-500 transition duration-300 hidden">
+                                Отмена
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <h4 class="text-xl font-semibold mb-2 mt-8">Управление существующими новостями</h4>
+                    <ul id="news-list-admin" class="space-y-4 max-h-96 overflow-y-auto">
+                        <!-- Список новостей для управления будет здесь -->
+                        <p class="text-gray-600 text-center">Загрузка новостей...</p>
+                    </ul>
+                    <button id="logout-btn" class="w-full bg-gray-400 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-500 transition duration-300 mt-4">Выйти</button>
+                </div>
+                
+                <button id="close-admin-modal" class="modal-close-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <main class="flex-grow">
+            <!-- Main section -->
+            <section id="home" class="page-section active">
+                <div class="container mx-auto py-16 px-4 flex flex-col md:flex-row-reverse items-center justify-between">
+                    <div class="w-full md:w-1/2 p-4 flex justify-center">
+                        <img src="https://i.postimg.cc/x8rxWfs2/image.png" alt="Ученики в школе" class="w-full h-auto object-cover rounded-xl shadow-lg">
+                    </div>
+                    <div class="w-full md:w-1/2 p-4 text-center md:text-left mt-8 md:mt-0">
+                        <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
+                            Добро пожаловать в МОУ СШ №54
+                        </h1>
+                        <p class="text-lg text-gray-600 mb-6">
+                            Мы воспитываем будущее России.
+                        </p>
+                        <p class="text-md text-gray-700 leading-relaxed mb-6">
+                            В нашей школе каждый ученик находит свой путь к успеху. Мы стремимся создать атмосферу, где знания, творчество и спорт идут рука об руку. Наши выпускники — это не только высокообразованные специалисты, но и настоящие патриоты, готовые приносить пользу своей стране.
+                        </p>
+                        <a href="#svedeniya" data-page="svedeniya" class="nav-link bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300">
+                            Узнать больше
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================================================= -->
+            <!-- НОВЫЙ РАЗДЕЛ В СООТВЕТСТВИИ С ПРИКАЗОМ 1493 -->
+            <!-- ================================================================================================= -->
+            <section id="svedeniya" class="page-section bg-white py-16">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center mb-8">Сведения об образовательной организации</h2>
+                    <nav class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-8 text-sm md:text-base">
+                        <a href="#svedeniya_osnovnye" data-subpage="svedeniya_osnovnye" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300 active">Основные сведения</a>
+                        <a href="#svedeniya_struktura" data-subpage="svedeniya_struktura" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Структура и органы управления</a>
+                        <a href="#svedeniya_dokumenty" data-subpage="svedeniya_dokumenty" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Документы</a>
+                        <a href="#svedeniya_obrazovanie" data-subpage="svedeniya_obrazovanie" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Образование</a>
+                        <a href="#svedeniya_rukovodstvo" data-subpage="svedeniya_rukovodstvo" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Руководство</a>
+                        <a href="#svedeniya_pedagogi" data-subpage="svedeniya_pedagogi" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Педагогический состав</a>
+                        <a href="#svedeniya_mto" data-subpage="svedeniya_mto" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">МТО и доступная среда</a>
+                        <a href="#svedeniya_platnye" data-subpage="svedeniya_platnye" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Платные образовательные услуги</a>
+                        <a href="#svedeniya_finansy" data-subpage="svedeniya_finansy" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Финансово-хозяйственная деятельность</a>
+                        <a href="#svedeniya_vakantnye" data-subpage="svedeniya_vakantnye" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Вакантные места для приема</a>
+                        <a href="#svedeniya_stipendii" data-subpage="svedeniya_stipendii" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Стипендии и меры поддержки</a>
+                        <a href="#svedeniya_mezhdunarodnoe" data-subpage="svedeniya_mezhdunarodnoe" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Международное сотрудничество</a>
+                        <a href="#svedeniya_pitanie" data-subpage="svedeniya_pitanie" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Организация питания</a>
+                        <a href="#svedeniya_standarty" data-subpage="svedeniya_standarty" class="nav-link-sved text-gray-600 hover:text-blue-600 transition duration-300">Образовательные стандарты</a>
+                    </nav>
+
+                    <div id="subpage-container" class="bg-gray-50 p-6 rounded-xl shadow-lg">
+
+                        <!-- Подраздел "Основные сведения" -->
+                        <div id="svedeniya_osnovnye" class="subpage-section active">
+                            <h3 class="text-2xl font-bold mb-4">Основные сведения</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Полное наименование:</strong> Муниципальное общеобразовательное учреждение "Средняя школа №54 Советского района Волгограда"</p>
+                                <p><strong>Сокращенное наименование (при наличии):</strong> МОУ СШ №54</p>
+                                <p><strong>Дата создания:</strong> [УКАЖИТЕ ДАТУ СОЗДАНИЯ]</p>
+                                <p><strong>Учредитель:</strong> [УКАЖИТЕ УЧРЕДИТЕЛЯ]</p>
+                                <p><strong>Место нахождения:</strong> г. Волгоград, ул. Казахская, д. 20</p>
+                                <p><strong>Режим и график работы:</strong> [УКАЖИТЕ РЕЖИМ И ГРАФИК РАБОТЫ]</p>
+                                <p><strong>Контактные телефоны:</strong> +7 844 241-00-42</p>
+                                <p><strong>Адреса электронной почты:</strong> school54@volgadmin.ru</p>
+                                <p><strong>Места осуществления образовательной деятельности:</strong> [УКАЖИТЕ АДРЕСА]</p>
+                                <p><strong>Лицензия на осуществление образовательной деятельности:</strong> [РАЗМЕСТИТЕ ВЫПИСКУ ИЗ РЕЕСТРА ЛИЦЕНЗИЙ]</p>
+                                <p><strong>Государственная аккредитация:</strong> [РАЗМЕСТИТЕ ВЫПИСКУ ИЗ РЕЕСТРА АККРЕДИТАЦИИ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Структура и органы управления" -->
+                        <div id="svedeniya_struktura" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Структура и органы управления образовательной организацией</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Структурные подразделения:</strong> [УКАЖИТЕ НАИМЕНОВАНИЯ]</p>
+                                <p><strong>Руководители структурных подразделений:</strong> [УКАЖИТЕ ФИО И ДОЛЖНОСТИ]</p>
+                                <p><strong>Места нахождения:</strong> [УКАЖИТЕ АДРЕСА]</p>
+                                <p><strong>Адреса сайтов:</strong> [УКАЖИТЕ АДРЕСА САЙТОВ ПРИ НАЛИЧИИ]</p>
+                                <p><strong>Адреса электронной почты:</strong> [УКАЖИТЕ E-MAIL ПРИ НАЛИЧИИ]</p>
+                                <p><strong>Положения о структурных подразделениях:</strong> [РАЗМЕСТИТЕ ССЫЛКИ НА ЭЛЕКТРОННЫЕ ДОКУМЕНТЫ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Документы" -->
+                        <div id="svedeniya_dokumenty" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Документы</h3>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><a href="#" class="text-blue-600 hover:underline">Устав школы (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Правила внутреннего распорядка обучающихся (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Правила внутреннего трудового распорядка (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Коллективный договор (при наличии) (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Локальные нормативные акты (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Отчет о результатах самообследования (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Предписания органов надзора и отчеты об их исполнении (при наличии) (файл-заглушка)</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Подраздел "Образование" -->
+                        <div id="svedeniya_obrazovanie" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Образование</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Реализуемые образовательные программы:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Языки образования:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Численность обучающихся:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ В ФОРМЕ ЭЛЕКТРОННОГО ДОКУМЕНТА]</p>
+                                <p><strong>Результаты приема:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Трудоустройство выпускников:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Научная деятельность:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ, ЕСЛИ ПРИМЕНИМО]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Руководство" -->
+                        <div id="svedeniya_rukovodstvo" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Руководство</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Руководитель:</strong> Белебихина Надежда Алексеевна, Директор</p>
+                                <p><strong>Телефон:</strong> +7 844 241-00-42</p>
+                                <p><strong>E-mail:</strong> school54@volgadmin.ru</p>
+                                <p><strong>Заместители:</strong></p>
+                                <ul class="list-disc list-inside pl-4">
+                                    <li>Федоркина Наталья Геннадьевна, Завуч по воспитательной работе</li>
+                                    <li>Мишаткин Сергей Федорович, Завуч по безопасности</li>
+                                    <li>[УКАЖИТЕ ДРУГИХ ЗАМЕСТИТЕЛЕЙ]</li>
+                                </ul>
+                                <p><strong>Контакты заместителей:</strong> [УКАЖИТЕ КОНТАКТЫ]</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Подраздел "Педагогический состав" -->
+                        <div id="svedeniya_pedagogi" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Педагогический состав</h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Познакомьтесь с нашей командой профессионалов, которые создают будущее наших учеников.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="p-4 rounded-xl shadow-inner bg-gray-50 text-center">
+                                    <h3 class="text-xl font-semibold mb-2">Федоркина Наталья Геннадьевна</h3>
+                                    <p class="text-gray-600">Завуч по воспитательной работе</p>
+                                </div>
+                                <div class="p-4 rounded-xl shadow-inner bg-gray-50 text-center">
+                                    <h3 class="text-xl font-semibold mb-2">Мишаткин Сергей Федорович</h3>
+                                    <p class="text-gray-600">Завуч по безопасности</p>
+                                </div>
+                                <div class="p-4 rounded-xl shadow-inner bg-gray-50 text-center">
+                                    <h3 class="text-xl font-semibold mb-2">Фасевич Инна Николаевна</h3>
+                                    <p class="text-gray-600">Учитель биологии</p>
+                                </div>
+                                <div class="p-4 rounded-xl shadow-inner bg-gray-50 text-center">
+                                    <h3 class="text-xl font-semibold mb-2">Ловчиниский Никита Андреевич</h3>
+                                    <p class="text-gray-600">Учитель русского языка и литературы</p>
+                                </div>
+                                <div class="p-4 rounded-xl shadow-inner bg-gray-50 text-center">
+                                    <h3 class="text-xl font-semibold mb-2">Писарев Роман Александрович</h3>
+                                    <p class="text-gray-600">Учитель физкультуры</p>
+                                </div>
+                                <div class="p-4 rounded-xl shadow-inner bg-gray-50 text-center">
+                                    <p class="text-gray-600">[ДРУГИЕ ПЕДАГОГИ]</p>
+                                    <p class="text-gray-600">[ИНФОРМАЦИЯ О КАЖДОМ]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Материально-техническое обеспечение..." -->
+                        <div id="svedeniya_mto" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Материально-техническое обеспечение и оснащенность образовательного процесса. Доступная среда</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Информация о материально-техническом обеспечении:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ О КАБИНЕТАХ, БИБЛИОТЕКАХ, СПОРТ-ОБЪЕКТАХ]</p>
+                                <p><strong>Доступ к информационным системам и сетям:</strong> [ОПИШИТЕ ДОСТУП]</p>
+                                <p><strong>Электронные образовательные ресурсы:</strong> [ПЕРЕЧИСЛИТЕ РЕСУРСЫ]</p>
+                                <p><strong>Специальные условия для получения образования инвалидами и лицами с ОВЗ:</strong> [ОПИШИТЕ УСЛОВИЯ, ДОСТУП В ЗДАНИЯ, НАЛИЧИЕ СПЕЦ. СРЕДСТВ ОБУЧЕНИЯ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Платные образовательные услуги" -->
+                        <div id="svedeniya_platnye" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Платные образовательные услуги</h3>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><a href="#" class="text-blue-600 hover:underline">Порядок оказания платных образовательных услуг (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Образец договора об оказании платных образовательных услуг (файл-заглушка)</a></li>
+                                <li><a href="#" class="text-blue-600 hover:underline">Стоимость обучения по программам (файл-заглушка)</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Подраздел "Финансово-хозяйственная деятельность" -->
+                        <div id="svedeniya_finansy" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Финансово-хозяйственная деятельность</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Объем образовательной деятельности:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Поступление и расходование средств по итогам финансового года:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>План финансово-хозяйственной деятельности:</strong> [РАЗМЕСТИТЕ ССЫЛКУ НА ЭЛЕКТРОННЫЙ ДОКУМЕНТ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Вакантные места..." -->
+                        <div id="svedeniya_vakantnye" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Вакантные места для приема (перевода) обучающихся</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Количество вакантных мест:</strong> [УКАЖИТЕ КОЛИЧЕСТВО ПО КАЖДОЙ ПРОГРАММЕ]</p>
+                                <p><strong>Места, финансируемые за счет бюджета:</strong> [УКАЖИТЕ КОЛИЧЕСТВО]</p>
+                                <p><strong>Места по договорам за счет средств физ./юр. лиц:</strong> [УКАЖИТЕ КОЛИЧЕСТВО]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Стипендии и меры поддержки" -->
+                        <div id="svedeniya_stipendii" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Стипендии и меры поддержки обучающихся</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Наличие и условия предоставления стипендий:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Меры социальной поддержки:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Наличие общежития/интерната:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Количество жилых помещений в общежитии/интернате:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Плата за проживание:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Международное сотрудничество" -->
+                        <div id="svedeniya_mezhdunarodnoe" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Международное сотрудничество</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Договоры с иностранными/международными организациями:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ О ЗАКЛЮЧЕННЫХ И ПЛАНИРУЕМЫХ ДОГОВОРАХ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Организация питания" -->
+                        <div id="svedeniya_pitanie" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Организация питания в образовательной организации</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Условия питания:</strong> [ОПИШИТЕ УСЛОВИЯ]</p>
+                                <p><strong>Меню ежедневного горячего питания:</strong> [РАЗМЕСТИТЕ МЕНЮ]</p>
+                                <p><strong>Информация о диетическом меню:</strong> [РАЗМЕСТИТЕ ИНФОРМАЦИЮ]</p>
+                                <p><strong>Перечень юр. лиц и ИП, оказывающих услуги по питанию:</strong> [РАЗМЕСТИТЕ СПИСОК]</p>
+                                <p><strong>Перечень юр. лиц и ИП, поставляющих продукты:</strong> [РАЗМЕСТИТЕ СПИСОК]</p>
+                                <p><strong>Форма обратной связи для родителей:</strong> [РАЗМЕСТИТЕ ФОРМУ]</p>
+                                <p><strong>Ответы на вопросы родителей по питанию:</strong> [РАЗМЕСТИТЕ ОТВЕТЫ]</p>
+                            </div>
+                        </div>
+
+                        <!-- Подраздел "Образовательные стандарты" -->
+                        <div id="svedeniya_standarty" class="subpage-section">
+                            <h3 class="text-2xl font-bold mb-4">Образовательные стандарты и требования</h3>
+                            <div class="space-y-4 text-gray-700 leading-relaxed">
+                                <p><strong>Федеральные государственные образовательные стандарты:</strong> [РАЗМЕСТИТЕ ССЫЛКИ НА АКТЫ]</p>
+                                <p><strong>Образовательные стандарты (при наличии):</strong> [РАЗМЕСТИТЕ КОПИИ ДОКУМЕНТОВ]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- News section -->
+            <section id="news" class="page-section bg-gray-100 py-16">
+                <div class="container mx-auto px-4">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold">Новости школы</h2>
+                        <!-- Кнопка администрирования, перенесена сюда -->
+                        <button id="admin-link" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-semibold hover:bg-gray-300 transition duration-300">
+                            Администрирование
+                        </button>
+                    </div>
+                    <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Новости будут загружаться сюда из Firestore -->
+                        <p id="news-loading-message" class="text-center text-gray-600">Загрузка новостей...</p>
+                    </div>
+                    <!-- Добавлен класс hidden по умолчанию, так как эти кнопки не требуются для текущей реализации -->
+                    <div id="news-buttons" class="flex justify-center mt-8 space-x-4 hidden">
+                        <button id="show-more-btn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300">
+                            Смотреть далее
+                        </button>
+                        <button id="show-less-btn" class="bg-gray-400 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-500 transition duration-300 hidden">
+                            Свернуть
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section id="gallery" class="page-section bg-white py-16">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center mb-8">Фотогалерея</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="gallery-card">
+                            <img src="https://i.postimg.cc/L6v7sZvC/image.png" alt="Церемония награждения юнармейцев" class="w-full h-auto object-cover rounded-xl">
+                            <div class="gallery-caption rounded-b-xl">
+                                <p class="text-sm">Торжественная церемония награждения лучших юнармейцев в честь 82-й годовщины Сталинградской битвы.</p>
+                            </div>
+                        </div>
+                        <div class="gallery-card">
+                            <img src="https://i.postimg.cc/52Y3MHrF/image.png" alt="Кадеты" class="w-full h-auto object-cover rounded-xl">
+                            <div class="gallery-caption rounded-b-xl">
+                                <p class="text-sm">Развитие кадетского движения — один из наших приоритетов с 2010 года. Сегодня в школе семь кадетских классов.</p>
+                            </div>
+                        </div>
+                        <div class="gallery-card">
+                            <img src="https://i.postimg.cc/y8MT61qp/image.png" alt="Кадеты СК" class="w-full h-auto object-cover rounded-xl">
+                            <div class="gallery-caption rounded-b-xl">
+                                <p class="text-sm">С 2017 года кадеты Следственного комитета изучают курс «Основы государственной службы в СК РФ».</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ section -->
+            <section id="faq" class="page-section bg-white">
+                <div class="container mx-auto py-16 px-4 max-w-4xl">
+                    <h2 class="text-3xl font-bold text-center mb-8">Часто задаваемые вопросы</h2>
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-lg">
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: Может ли классный руководитель собирать сведения о соглашении родителей (законных представителей) на профилактические осмотры или вакцинацию их несовершеннолетних детей?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** да, может. Законодательство о здравоохранении закрепляет обязанность проведения предварительных медицинских осмотров несовершеннолетних граждан, поступающих в образовательные организации, а также периодических медицинских осмотров учащихся. Данное требование содержится в п. 2, 3 ч. 2 ст. 46 Федерального закона от 21.11.2011 № 323-ФЗ «Об основах охраны здоровья граждан в Российской Федерации». Необходимым предварительным условием медицинского вмешательства является дача информированного добровольного согласия несовершеннолетнего или его законного представителя на медицинское вмешательство с соблюдением требований, установленных ст. 20 Федерального закона № 323-ФЗ от 21.11.2011 «Об основах охраны здоровья граждан в Российской Федерации».
+                                    Согласно ч.2 ст.11 ФЗ от 17.09.1998 N 157-ФЗ (ред. от 08.12.2020) «Об иммунопрофилактике инфекционных болезней» Профилактические прививки проводятся при наличии информированного добровольного согласия на медицинское вмешательство гражданина, одного из родителей либо иного законного представителя несовершеннолетнего в возрасте до 15 лет.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: Имеет ли право директор школы отказать в приеме ребенка в образовательное учреждение без справки от врача фтизиатра?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** На этот вопрос нельзя ответить однозначно «Да» или «Нет». Директор школы имеет право не допустить обучающегося до учебных занятий только в части очной формы обучения, если обучающийся не прошел туберкулинодиагностику и соответственно не имеет справку от врача-фтизиатра. С целью обеспечения права ребенка на образование предусмотрены различные формы получения образования и формы обучения, закрепленные в статье 17 этого закона, которой предусмотрены формы обучения как в организациях, осуществляющих образовательную деятельность (в очной, очно-заочной или заочной форме), так и вне организаций, осуществляющих образовательную деятельность (в форме семейного образования и самообразования).
+                                    Данные нормы права закреплены Постановлением Главного государственного санитарного врача Российской Федерации от 22.10.2013 № 60 утверждены Санитарно-эпидемиологические правила СП 3.1.2.3114-13 «Профилактика туберкулеза», устанавливающие требования к комплексу организационных, лечебно-профилактических, санитарно-противоэпидемических (профилактических), дезинфекционных мероприятий, полное и своевременное проведение которых обеспечивает раннее выявление, предупреждение распространения заболеваний туберкулезом среди населения.
+                                    Согласно п.5.2 названных Правил, проба Манту проводится 2 раза в год детям, не вакцинированным против туберкулеза по медицинским противопоказаниям, а также не привитым против туберкулеза по причине отказа родителей от иммунизации ребенка, до получения ребенком прививки против туберкулеза. Пункт 5.7 Правил предусматривает, допуск детей, туберкулинодиагностика которым не проводилась, в детскую организацию при наличии заключения врача-фтизиатра об отсутствии заболевания.
+                                    Законность данной нормы подтверждена решением Верховного Суда Российской Федерации от 17.02.2015, в соответствии с которым названное требование направлено на предупреждение возникновения, распространения туберкулеза, а также соблюдения прав других граждан на охрану здоровья и благоприятную среду обитания, а также решением Верховного Суда Российской Федерации от 18 апреля 2019 г. N АКПИ19-115, где пояснили, что исходя из абзаца седьмого пункта 2 раздела «Выявление и диагностика» Клинических рекомендаций Федеральный закон № 273-ФЗ в статье 28 определяет компетенцию, права, обязанности и ответственность образовательной организации. Часть 3 данной нормы закона к компетенции образовательной организации в установленной сфере деятельности относит создание необходимых условий для охраны и укрепления здоровья (пункт 15). Часть 6 возлагает на образовательную организацию обязанность осуществлять свою деятельность в соответствии с законодательством об образовании, в том числе: создавать безопасные условия обучения, воспитания обучающихся, присмотра и ухода за обучающимися, их содержания в соответствии с установленными нормами, обеспечивающими жизнь и здоровье обучающихся, работников образовательной организации; соблюдать права и свободы обучающихся, родителей (законных представителей) несовершеннолетних обучающихся, работников образовательной организации.
+                                    Судебная практика, сложившаяся во многих субъектах Российской Федерации, признает законными действия врачей, отказывающих в выдаче медицинских заключений без прохождения консультации у врача-фтизиатра, а также администрации образовательных организаций, не допускающих детей без справки врача-фтизиатра к очной форме обучения.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: По каким программам ведется обучение детей - инвалидов и лиц с ОВЗ?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** согласно ст.79 ФЗ от 29.12.2012 N 273-ФЗ (ред. от 08.12.2020) "Об образовании в Российской Федерации" (с изм. и доп., вступ. в силу с 01.01.2021) дети с ограниченными возможностями здоровья принимаются на обучение по адаптированной основной общеобразовательной программе только с согласия родителей (законных представителей) и по рекомендациям психолого-медико-педагогической комиссии. Лицам с различными формами умственной отсталости, не имеющим основного общего и среднего общего образования и обучавшимся по адаптированным программам, выдается свидетельство об обучении.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: Имеется ли в вашем образовательном учреждении доступная среда для детей - инвалидов и лиц с ОВЗ?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** Согласно части 3 статьи 79 ФЗ № 273 под специальными условиями для получения образования обучающимися с ОВЗ понимаются условия обучения, воспитания и развития таких обучающихся, включающие в себя:
+                                    использование специальных образовательных программ и методов обучения и воспитания;
+                                    использование специальных учебников, учебных пособий и дидактических материалов, специальных технических средств обучения коллективного и индивидуального пользования;
+                                    предоставление услуг ассистента (помощника), оказывающего обучающимся необходимую техническую помощь;
+                                    проведение групповых и индивидуальных коррекционных занятий;
+                                    обеспечение доступа в здания организаций, осуществляющих образовательную деятельность, и другие условия, без которых невозможно или затруднено освоение образовательных программ обучающимися с ОВЗ.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: Что необходимо предоставить в школу, если мы всей семьей собираемся уехать?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** чтобы забрать ребенка во время образовательного процесса необходимо в письменной форме написать установленное образцом заявление на освобождение от занятий. Для написания данного заявления вам нужно обратиться в приемную школы. Если ребенок во время образовательного процесса уезжает в санаторий или оздоровительный лагерь, то помимо вышеназванного заявления необходимо предоставить копию санаторно-курортной путевки или оздоровительной путевки. Если ребенок во время образовательного процесса уезжает на соревнования, то помимо вышеназванного заявления необходимо представить справку от организатора мероприятия (спортивная школа, школа искусств и т.д.).
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: Какую помощь школа предоставляет ученикам при подготовке к ГИА, ЕГЭ?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** В целях успешного прохождения государственной итоговой аттестации учащимися выпускных классов в форме ОГЭ, ЕГЭ в нашем образовательном учреждении в течение учебного года проводятся пробные (репетиционные) экзамены, обучающимся предоставляется возможность в начале учебного года выбрать изучение практикумов, направленных на подготовку к ГИА по обязательным предметам и предметам по выбору.
+                                    Также проводятся индивидуальные консультации с обучающимися и их родителями (законными представителями) по вопросам связанным с обучением, освоением образовательных программ.
+                                    Дополнительно в школе организованы платные образовательные услуги по предметам, которые выполняют функцию закрепления и отработки изученного материала за весь период обучения в школе и его углубления.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header flex justify-between items-center py-4">
+                                <h3 class="text-lg font-semibold">В: Имеет ли право образовательное учреждение не допустить моего ребенка до учебных занятий, если он отсутствует в школе по семейным обстоятельствам или другим причинам без предоставления справки от врача по состоянию здоровья?</h3>
+                                <svg class="accordion-icon w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="accordion-content">
+                                <p class="text-gray-700 leading-relaxed">
+                                    **О:** да, имеет право.
+                                    На основании Постановления главного государственного санитарного врача от 30 июня 2020 г., в условиях распространения новой коронавирусной инфекции (COVID-19)" обучающиеся, перенесшие заболевание, и (или) в случае, если ребенок был в контакте с больным COVID-19, допускается при наличии медицинского заключения врача об отсутствии медицинских противопоказаний для пребывания в учреждении.
+                                    В случае отсутствия обучающегося на учебных занятиях без заявления родителей (законных представителей) об освобождении от учебных занятий по уважительной причине более 5 дней (за исключением выходных и праздничных дней), обучающиеся принимаются в образовательные организации только при наличии справки от врача, длительности заболевания и (или) сведений об отсутствии контакта с инфекционными больными.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback section -->
+            <section id="feedback" class="page-section bg-gray-100">
+                <div class="container mx-auto py-16 px-4">
+                    <h2 class="text-3xl font-bold text-center mb-8">Обратная связь</h2>
+                    <p class="text-gray-600 text-center mb-8">
+                        Вы можете задать любой вопрос, оставить свои предложения или замечания, заполнив эту форму. Мы обязательно свяжемся с вами в ближайшее время.
+                    </p>
+                    <div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                        <form action="#" method="POST">
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 font-medium mb-2">Имя</label>
+                                <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ваше имя">
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ваш email">
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="block text-gray-700 font-medium mb-2">Сообщение</label>
+                                <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ваше сообщение"></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300">
+                                    Отправить
+                                </button>
+                                <p class="text-sm mt-2 text-gray-500">
+                                    <!-- Комментарий о функциональности формы -->
+                                    Этот сайт является демо-версией, поэтому форма не отправляет данные.
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-8 mt-auto">
+            <div class="container mx-auto px-4 text-center">
+                <p>&copy; 2025 МОУ СШ №54. Все права защищены.</p>
+                <p class="text-sm mt-2">
+                    Разработано для школы №54
+                </p>
+                <p class="text-sm mt-1">
+                    Архипов Иван
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Глобальные переменные из среды Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Инициализация Firebase
+        let app, db, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            console.log("Firebase инициализирован.");
+        } catch (error) {
+            console.error("Ошибка инициализации Firebase:", error);
+        }
+
+        // Получение DOM-элементов
+        const newsContainer = document.getElementById('news-container');
+        const adminLink = document.getElementById('admin-link');
+        const adminModal = document.getElementById('admin-modal');
+        const closeAdminModalBtn = document.getElementById('close-admin-modal');
+        const authFormContainer = document.getElementById('auth-form-container');
+        const adminPanelContainer = document.getElementById('admin-panel-container');
+        const newsForm = document.getElementById('news-form');
+        const newsTitleInput = document.getElementById('news-title');
+        const newsContentTextarea = document.getElementById('news-content');
+        const newsImageInput = document.getElementById('news-image');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editDocIdInput = document.getElementById('edit-doc-id');
+        const logoutBtn = document.getElementById('logout-btn');
+        const newsLoadingMessage = document.getElementById('news-loading-message');
+        const loginDemoBtn = document.getElementById('login-demo-btn');
+        const formMessage = document.getElementById('form-message');
+        const newsListAdmin = document.getElementById('news-list-admin');
+
+        // --- Обработчики событий для навигации по страницам ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.page-section');
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        const svedeniyaNavLinks = document.querySelectorAll('.nav-link-sved');
+        const svedeniyaSubpages = document.querySelectorAll('.subpage-section');
+
+        function showPage(pageId) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            const activeSection = document.getElementById(pageId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+        }
+
+        function highlightNavLink(pageId) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const pageId = link.getAttribute('data-page');
+                showPage(pageId);
+                highlightNavLink(pageId);
+            });
+        });
+
+        // Логика для аккордеона (FAQ)
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+                header.classList.toggle('open');
+                content.classList.toggle('open');
+            });
+        });
+
+        // Логика для навигации внутри раздела "Сведения об ОО"
+        function showSubpage(subpageId) {
+            svedeniyaSubpages.forEach(subpage => {
+                subpage.classList.remove('active');
+            });
+            const activeSubpage = document.getElementById(subpageId);
+            if (activeSubpage) {
+                activeSubpage.classList.add('active');
+            }
+        }
+
+        function highlightSvedeniyaNavLink(subpageId) {
+            svedeniyaNavLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-subpage') === subpageId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        svedeniyaNavLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const subpageId = link.getAttribute('data-subpage');
+                showSubpage(subpageId);
+                highlightSvedeniyaNavLink(subpageId);
+            });
+        });
+
+        // --- Логика для настроек доступности ---
+        const accessibilityLink = document.getElementById('visual-impairment-link');
+        const modal = document.getElementById('accessibility-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const fontDecreaseBtn = document.getElementById('font-decrease-btn');
+        const fontIncreaseBtn = document.getElementById('font-increase-btn');
+        const fontWeightBtn = document.getElementById('font-weight-btn');
+        const fontStyleBtn = document.getElementById('font-style-btn');
+        const colorSchemeBtn = document.getElementById('color-scheme-btn');
+        const resetSettingsBtn = document.getElementById('reset-settings-btn');
+        
+        let currentFontSize = 16;
+        let isBold = false;
+        const fontFamilies = ['Inter, sans-serif', 'Georgia, serif', 'Arial, sans-serif', 'Courier New, monospace'];
+        let currentFontIndex = 0;
+
+        accessibilityLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        fontDecreaseBtn.addEventListener('click', () => {
+            currentFontSize = Math.max(14, currentFontSize - 2);
+            document.body.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontIncreaseBtn.addEventListener('click', () => {
+            currentFontSize = Math.min(24, currentFontSize + 2);
+            document.body.style.fontSize = `${currentFontSize}px`;
+        });
+
+        fontWeightBtn.addEventListener('click', () => {
+            isBold = !isBold;
+            document.body.style.fontWeight = isBold ? 'bold' : 'normal';
+        });
+
+        fontStyleBtn.addEventListener('click', () => {
+            currentFontIndex = (currentFontIndex + 1) % fontFamilies.length;
+            document.body.style.fontFamily = fontFamilies[currentFontIndex];
+        });
+
+        colorSchemeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        resetSettingsBtn.addEventListener('click', () => {
+            currentFontSize = 16;
+            isBold = false;
+            currentFontIndex = 0;
+            document.body.style.fontSize = '';
+            document.body.style.fontWeight = '';
+            document.body.style.fontFamily = '';
+            document.body.classList.remove('dark-mode');
+        });
+        
+        // Логика для кнопок "Смотреть далее" и "Свернуть"
+        const showMoreBtn = document.getElementById('show-more-btn');
+        const showLessBtn = document.getElementById('show-less-btn');
+        const moreNewsSection = document.getElementById('more-news');
+
+        // Обработчик для кнопки "Смотреть далее"
+        if (showMoreBtn) {
+            showMoreBtn.addEventListener('click', () => {
+                if (moreNewsSection) {
+                    moreNewsSection.classList.add('active');
+                    showMoreBtn.classList.add('hidden');
+                    if (showLessBtn) {
+                        showLessBtn.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+        
+        // Обработчик для кнопки "Свернуть"
+        if (showLessBtn) {
+            showLessBtn.addEventListener('click', () => {
+                if (moreNewsSection) {
+                    moreNewsSection.classList.remove('active');
+                    showMoreBtn.classList.remove('hidden');
+                    if (showLessBtn) {
+                        showLessBtn.classList.add('hidden');
+                    }
+                }
+            });
+        }
+        
+        // --- Логика для админ-панели с Firebase ---
+
+        // Открытие модального окна админки
+        adminLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            adminModal.classList.add('active');
+        });
+
+        // Закрытие модального окна админки
+        closeAdminModalBtn.addEventListener('click', () => {
+            adminModal.classList.remove('active');
+        });
+
+        adminModal.addEventListener('click', (e) => {
+            if (e.target === adminModal) {
+                adminModal.classList.remove('active');
+            }
+        });
+        
+        // Переключение на админ-панель (демонстрационный режим)
+        if (loginDemoBtn) {
+            loginDemoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                authFormContainer.classList.add('hidden');
+                adminPanelContainer.classList.remove('hidden');
+            });
+        }
+        
+        // Выход из админ-панели
+        logoutBtn.addEventListener('click', () => {
+            // Скрываем админ-панель и показываем форму входа
+            adminPanelContainer.classList.add('hidden');
+            authFormContainer.classList.remove('hidden');
+        });
+
+        // onAuthStateChanged будет запускать всю логику Firestore только после аутентификации
+        if (auth && db) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    console.log("Пользователь аутентифицирован. UID:", user.uid);
+                    
+                    // Загрузка новостей из Firestore в реальном времени
+                    const newsCollectionRef = collection(db, `artifacts/${appId}/public/data/news`);
+                    onSnapshot(query(newsCollectionRef, orderBy("timestamp", "desc")), (querySnapshot) => {
+                        newsContainer.innerHTML = ''; // Очищаем контейнер перед загрузкой
+                        newsListAdmin.innerHTML = ''; // Очищаем список новостей в админке
+                        newsLoadingMessage.classList.add('hidden');
+                        
+                        if (querySnapshot.empty) {
+                            newsContainer.innerHTML = '<p class="text-center text-gray-600">На данный момент новостей нет.</p>';
+                        } else {
+                            querySnapshot.forEach((doc) => {
+                                const news = doc.data();
+                                const docId = doc.id;
+
+                                // Рендер для главной страницы
+                                const newsCard = document.createElement('div');
+                                newsCard.className = 'bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center';
+                                
+                                let imageHtml = news.imageUrl ? `<img src="${news.imageUrl}" alt="${news.title}" class="w-full h-auto object-cover rounded-md mb-4">` : '';
+                                
+                                newsCard.innerHTML = `
+                                    ${imageHtml}
+                                    <h3 class="text-xl font-bold mb-2">${news.title}</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">${news.content}</p>
+                                `;
+                                newsContainer.appendChild(newsCard);
+
+                                // Рендер для админ-панели
+                                const listItem = document.createElement('li');
+                                listItem.className = 'flex justify-between items-center bg-white p-4 rounded-xl shadow-inner';
+                                listItem.innerHTML = `
+                                    <span class="text-gray-800 font-semibold">${news.title}</span>
+                                    <div class="space-x-2">
+                                        <button data-id="${docId}" data-title="${news.title}" data-content="${news.content}" data-image="${news.imageUrl}" class="edit-btn bg-yellow-500 text-white px-3 py-1 rounded-full text-sm hover:bg-yellow-600 transition duration-300">Изменить</button>
+                                        <button data-id="${docId}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded-full text-sm hover:bg-red-600 transition duration-300">Удалить</button>
+                                    </div>
+                                `;
+                                newsListAdmin.appendChild(listItem);
+                            });
+
+                            // Добавляем обработчики для кнопок "Удалить" и "Изменить"
+                            newsListAdmin.querySelectorAll('.delete-btn').forEach(button => {
+                                button.addEventListener('click', async () => {
+                                    const docId = button.dataset.id;
+                                    try {
+                                        await deleteDoc(doc(db, newsCollectionRef.path, docId));
+                                        formMessage.textContent = "Новость успешно удалена!";
+                                        formMessage.classList.remove('hidden');
+                                        formMessage.classList.remove('text-red-500');
+                                        formMessage.classList.add('text-green-500');
+                                        // Скрываем сообщение через 3 секунды
+                                        setTimeout(() => { formMessage.classList.add('hidden'); }, 3000);
+                                    } catch (error) {
+                                        console.error("Ошибка при удалении новости:", error);
+                                        formMessage.textContent = "Ошибка при удалении новости.";
+                                        formMessage.classList.remove('hidden');
+                                        formMessage.classList.remove('text-green-500');
+                                        formMessage.classList.add('text-red-500');
+                                        setTimeout(() => { formMessage.classList.add('hidden'); }, 3000);
+                                    }
+                                });
+                            });
+
+                            newsListAdmin.querySelectorAll('.edit-btn').forEach(button => {
+                                button.addEventListener('click', () => {
+                                    const { id, title, content, image } = button.dataset;
+                                    editDocIdInput.value = id;
+                                    newsTitleInput.value = title;
+                                    newsContentTextarea.value = content;
+                                    newsImageInput.value = image;
+                                    submitBtn.textContent = "Обновить новость";
+                                    cancelEditBtn.classList.remove('hidden');
+                                    // Прокручиваем модальное окно к форме
+                                    adminPanelContainer.scrollTop = 0;
+                                });
+                            });
+                        }
+                    }, (error) => {
+                        console.error("Ошибка в snapshot listener Firestore:", error);
+                        // Проверяем, не является ли это ошибкой разрешений
+                        if (error.code === 'permission-denied') {
+                             newsContainer.innerHTML = `<p class="text-center text-red-500">Ошибка: Отказано в доступе. Убедитесь, что вы авторизованы.</p>`;
+                        }
+                    });
+
+                    // Отправка формы (добавление или обновление)
+                    newsForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        formMessage.classList.add('hidden');
+                        
+                        const docId = editDocIdInput.value;
+                        const title = newsTitleInput.value.trim();
+                        const content = newsContentTextarea.value.trim();
+                        const imageUrl = newsImageInput.value.trim();
+                        
+                        if (title && content) {
+                            try {
+                                if (docId) {
+                                    // Режим редактирования
+                                    const docRef = doc(db, newsCollectionRef.path, docId);
+                                    await updateDoc(docRef, { title, content, imageUrl });
+                                    formMessage.textContent = "Новость успешно обновлена!";
+                                } else {
+                                    // Режим добавления
+                                    await addDoc(newsCollectionRef, {
+                                        title,
+                                        content,
+                                        imageUrl,
+                                        timestamp: serverTimestamp() // Автоматически добавляем метку времени
+                                    });
+                                    formMessage.textContent = "Новость успешно добавлена!";
+                                }
+                                
+                                formMessage.classList.remove('hidden');
+                                formMessage.classList.remove('text-red-500');
+                                formMessage.classList.add('text-green-500');
+                                
+                                // Очищаем форму и сбрасываем режим
+                                newsTitleInput.value = '';
+                                newsContentTextarea.value = '';
+                                newsImageInput.value = '';
+                                editDocIdInput.value = '';
+                                submitBtn.textContent = "Добавить новость";
+                                cancelEditBtn.classList.add('hidden');
+                                setTimeout(() => { formMessage.classList.add('hidden'); }, 3000);
+
+                            } catch (error) {
+                                console.error("Ошибка при сохранении новости:", error);
+                                formMessage.textContent = "Ошибка при сохранении новости.";
+                                formMessage.classList.remove('hidden');
+                                formMessage.classList.remove('text-green-500');
+                                formMessage.classList.add('text-red-500');
+                                setTimeout(() => { formMessage.classList.add('hidden'); }, 3000);
+                            }
+                        } else {
+                            formMessage.textContent = "Заголовок и текст новости обязательны!";
+                            formMessage.classList.remove('hidden');
+                            formMessage.classList.remove('text-green-500');
+                            formMessage.classList.add('text-red-500');
+                            setTimeout(() => { formMessage.classList.add('hidden'); }, 3000);
+                        }
+                    });
+
+                    // Обработчик кнопки "Отмена"
+                    cancelEditBtn.addEventListener('click', () => {
+                        newsTitleInput.value = '';
+                        newsContentTextarea.value = '';
+                        newsImageInput.value = '';
+                        editDocIdInput.value = '';
+                        submitBtn.textContent = "Добавить новость";
+                        cancelEditBtn.classList.add('hidden');
+                        formMessage.classList.add('hidden');
+                    });
+
+                } else {
+                    console.log("Пользователь вышел из системы.");
+                    // Аутентификация, если пользователь не вошел в систему
+                    if (initialAuthToken) {
+                        try {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } catch (error) {
+                            console.error("Ошибка входа с токеном:", error);
+                            // Если токен не работает, пробуем анонимный вход
+                            await signInAnonymously(auth);
+                        }
+                    } else {
+                        // Для локального файла или автономной работы
+                        await signInAnonymously(auth);
+                    }
+                }
+            });
+        }
+
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            const pageId = window.location.hash.substring(1) || 'home';
+            showPage(pageId);
+            highlightNavLink(pageId);
+
+            // Инициализация подраздела "Сведения об ОО"
+            if (pageId === 'svedeniya') {
+                const subpageId = 'svedeniya_osnovnye';
+                showSubpage(subpageId);
+                highlightSvedeniyaNavLink(subpageId);
+            }
+        });
+    </script>
+</body>
+</html>
